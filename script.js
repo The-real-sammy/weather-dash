@@ -36,7 +36,33 @@ function fetchWeatherData(cityName) {
           .then(weatherData => {
             //this should process and check the current weather data and then display
             console.log("this should be the Current Weather:", weatherData);
-            //then add code to append data to page
+
+    //   * When a user views the current weather conditions for that city they are presented with:
+            //this is creating the elements 
+            var temperature = document.createElement("h3"); //     * The temperature
+            var city = document.createElement("p"); //     * The city name
+            var date = document.createElement("p"); //     * The date
+            var icon = document.createElement("p"); //     * An icon representation of weather conditions
+            var humidity = document.createElement("p"); //     * The humidity
+            var wind = document.createElement("p"); //     * The wind speed
+// setting the information ?
+    var temp = Math.round(weatherData.main.temp - 273.15); // this should convert Kelvin to Celsius
+    temperature.textContent = `Temperature: ${temperature}°C`;
+    city.textContent = `Name: ${weatherData.name}`;
+    wind.textContent = `Wind Speed: ${weatherData.wind[1]}`;
+    humidity.textContent = `Name: ${weatherData.main[1]}`;
+    date.textContent = `Name: ${weatherData.timezone}`; // this needs to be converted to correct time format
+
+    var weatherInfo = document.getElementById("weather-search")
+
+        // Now append the elements to the weatherInfo container
+        weatherInfo.appendChild(temperature);
+        weatherInfo.appendChild(city);
+        weatherInfo.appendChild(wind);
+        weatherInfo.appendChild(humidity);
+        weatherInfo.appendChild(date);
+
+
           });
       }
     })
@@ -54,13 +80,7 @@ searchForm.addEventListener('submit', function (event) {
   fetchWeatherData(cityName)
 })
 
-//   * When a user views the current weather conditions for that city they are presented with:
-//     * The city name
-//     * The date
-//     * An icon representation of weather conditions
-//     * The temperature
-//     * The humidity
-//     * The wind speed
+
 
 //   * When a user view future weather conditions for that city they are presented with a 5-day forecast that displays:
 //     * The date
