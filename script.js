@@ -1,6 +1,7 @@
 // API KEY
 var apiKey = '8993ea18706be745ed1d2327a688cc19'
 
+
 //API URLS
 var geoApiURL = 'https://api.openweathermap.org/geo/1.0/direct?';
 var currentWeatherApiURL = 'https://api.openweathermap.org/data/2.5/weather?';
@@ -16,45 +17,36 @@ var searchForm = document.getElementById("search-form");// This is the Search fo
 
 //   * When a user searches for a city they are presented with current and future conditions for that city and that city is added to the search history
 function fetchWeatherData(cityName) {
-  // Fetch data from API
-  // Handle response and errors
 
-  var cityURL =
-  geoApiURL +
-  currentWeatherApiURL +
-    "&appid=8993ea18706be745ed1d2327a688cc19";
-
+  //  Fetch city data using the geo API
+  var cityURL = geoApiURL + `q=${cityName}&appid=${apiKey}`;
   fetch(cityURL)
-    .then(function (res) {
-      return res.json();
+    .then(res => res.json())
+    .then(data => {
+      //this should handle a successful response by extracting data
+      if (data.length > 0) {
+        //now check if the city data is found
+        var lon = data[0].lon;
+        var lat = data[0].lat;
+
+        // now fetch the weather data using the current weather API
+        var currentWeatherURL = currentWeatherApiURL + `lat=${lat}&lon=${lon}&appid=${apiKey}`;
+
+        fetch(currentWeatherURL)
+          .then(res => res.json())
+          .then(weatherData => {
+            //this should process and check the current weather data and then display
+            console.log("this should be the Current Weather:", weatherData);
+            //then add code to append data to page
+          });
+      }
     })
-    .then(function (data) {
-      console.log(cityURL);
-      console.log(data);
-
-      var lon = data[0].lon;
-      var lat = data[0].lat;
-
-      var longLatURL =
-        "https://api.openweathermap.org/data/2.5/forecast?lat=" +
-        lat +
-        "&lon=" +
-        lon +
-
-        "&appid=ef4ac2c82d48b8c9e99b208c1d96371c";
-      fetch(longLatURL)
-        .then(function (res) {
-          return res.json();
-        })
-        .then(function (data) {
-          console.log(longLatURL);
-          console.log(data);
-        })
-        .catch(error => { // Handle any errors
-
-          console.error(error);
-})
-};
+    // This should handle any errors
+    .catch(error => {
+      console.error(error);
+      alert("Error: Unable to fetch weather data. Please check your API key or internet connection."); // error message for user 
+    })
+}; fetchWeatherData()
 
 //   * When a user views the current weather conditions for that city they are presented with:
 //     * The city name
