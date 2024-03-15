@@ -16,6 +16,9 @@ var weatherInfo = document.getElementById("today"); //the weather container
 var searchHistory = document.getElementById("history");
 searchHistory.innerHTML = ""; // this is to clear previous history
 
+var forecast= document.getElementById("forecast");
+ //this is to show a 5  day forecast 
+
 
 
 //   * When a user searches for a city they are presented with current and future conditions for that city
@@ -88,6 +91,43 @@ function displayWeather(weatherData) {
   weatherInfo.appendChild(date);
 }
 
+
+function displayForecast(forecastData) {
+  var forecast= document.getElementById("forecast"); //this is to show a 5  day forecast 
+  forecast.classList.add("row", "mt-3"); 
+
+  // this should create a Loop through the 5 forecast days
+  for (var i = 0; i < 5; i++) {
+    var forecastItem = forecastData.list[i * 8]; //forecast updates every 8 hours ?
+
+    // Create elements for each forecast item
+    var forecastCol = document.createElement("div"); // Column for 5 day's forecast
+    forecastCol.innerHTML = forecastData;
+    var date = document.createElement("p");
+    var temperature = document.createElement("p");
+    var humidity = document.createElement("p");
+   
+    date.textContent = new Date(forecastItem.dt * 1000).toLocaleDateString();
+    temperature.textContent = `Temp: ${Math.round(forecastItem.main.temp - 273.15)}°C`;
+    humidity.textContent = `Humidity: ${forecastItem.main.humidity}%`;
+
+    forecastCol.classList.add("col-md-2", "text-center");
+
+    // Append elements to the column
+    forecastCol.appendChild(date);
+    forecastCol.appendChild(temperature);
+    forecastCol.appendChild(humidity);
+
+    // Append the column to the forecast container
+    forecast.appendChild(forecastCol);
+  }
+  weatherInfo.appendChild(forecast);
+displayWeather(weatherData);
+displayForecast(forecastData);
+  // Append the forecast container to the weather information container
+}
+
+
 // add the city is to the search history
 function saveSearch(cityName){
   var searchCity =  JSON.parse(localStorage.getItem("citySearched")) || []; // This should either get the existing cities searched or create an empty array
@@ -112,6 +152,7 @@ function loadHistory () {
   })
 };
 
+
 //the function will only be called when the search form is submitted
 var searchForm = document.getElementById("search-form");
 searchForm.addEventListener('submit', function (event) {
@@ -122,9 +163,3 @@ searchForm.addEventListener('submit', function (event) {
   }
 })
 
-//   * When a user view future weather conditions for that city they are presented with a 5-day forecast that displays:
-//     * The date
-//     * An icon representation of weather conditions
-//     * The temperature
-//     * The humidity
-//   * When a user click on a city in the search history they are again presented with current and future conditions for that city
