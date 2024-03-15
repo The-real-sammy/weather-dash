@@ -70,9 +70,9 @@ function displayWeather(weatherData) {
   // setting the information ?
 
   var temp = Math.round(weatherData.main.temp - 273.15); // this should convert Kelvin to Celsius
-  temperature.textContent = `Temperature: ${temperature}°C`;
+  temperature.textContent = `Temperature: ${weatherData.main.temp}°C`;
   city.textContent = `Name: ${weatherData.name}`;
-  wind.textContent = `Wind Speed: ${weatherData.wind}m/s`;
+  wind.textContent = `Wind Speed: ${weatherData.wind.speed}m/s`;
   humidity.textContent = `Humidity: ${weatherData.main.humidity}`;
   date.textContent = `Date: ${new Date().toLocaleString()}`; // this needs to be converted to correct time format
 
