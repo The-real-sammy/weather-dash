@@ -12,11 +12,13 @@ var weatherApiImage = 'https://openweathermap.org/img/wn/';
 // * Create a weather dashboard with form inputs - this is a DOM element 
 
 var searchForm = document.getElementById("search-form");// This is the Search form element 
-var weatherInfo = document.getElementById("today"); //the weather container
+var weatherInfo = document.getElementById("today"); //the weather container 
+var searchHistory = document.getElementById("history");
+searchHistory.innerHTML = ""; // this is to clear previous history
 
 
 
-//   * When a user searches for a city they are presented with current and future conditions for that city and that city is added to the search history
+//   * When a user searches for a city they are presented with current and future conditions for that city
 //testing async/await to get data to display on page
 async function fetchWeatherData(cityName) {
   try {
@@ -61,17 +63,17 @@ function displayWeather(weatherData) {
     return;
   }
 
-  var temperature = document.createElement("h3"); //     * The temperature
-  var city = document.createElement("p"); //     * The city name
+  var city = document.createElement("h3"); //     * The city name
+  var temperature = document.createElement("p"); //     * The temperature
   var date = document.createElement("p"); //     * The date
   var icon = document.createElement("p"); //     * An icon representation of weather conditions
   var humidity = document.createElement("p"); //     * The humidity
   var wind = document.createElement("p"); //     * The wind speed
   // setting the information ?
 
+  city.textContent = `Name: ${weatherData.name}`;
   var temp = Math.round(weatherData.main.temp - 273.15); // this should convert Kelvin to Celsius
   temperature.textContent = `Temperature: ${weatherData.main.temp}°C`;
-  city.textContent = `Name: ${weatherData.name}`;
   wind.textContent = `Wind Speed: ${weatherData.wind.speed}m/s`;
   humidity.textContent = `Humidity: ${weatherData.main.humidity}`;
   date.textContent = `Date: ${new Date().toLocaleString()}`; // this needs to be converted to correct time format
@@ -79,20 +81,46 @@ function displayWeather(weatherData) {
   console.log("is this the:", weatherInfo)
 
   // Now append the elements to the weatherInfo container
-  weatherInfo.appendChild(temperature);
   weatherInfo.appendChild(city);
+  weatherInfo.appendChild(temperature);
   weatherInfo.appendChild(wind);
   weatherInfo.appendChild(humidity);
   weatherInfo.appendChild(date);
 }
 
+// add the city is to the search history
+function saveSearch(cityName){
+  var searchCity =  JSON.parse(localStorage.getItem("citySearched")) || []; // This should either get the existing cities searched or create an empty array
+  citySearched.push(cityName.toUpperCase()); // Save city name in uppercase for case-insensitive search
+  localStorage.setItem("citySearched", JSON.stringify(citySearched)); // Update localStorage
+  loadHistory(); // Update search history display
+}
+
+function loadHistory () {
+  var citySearched = JSON.parse(localStorage.getItem("citySearched")) || [];
+  var searchHistory = document.getElementById("history");
+  searchHistory.innerHTML = ""; 
+
+  citySearched.forEach(function(city){
+    var li = document.createElement("a");
+    li.classList.add("list-group-item", "list-group-item-action")
+    li.textContent = citySearched;
+    li.addEventListener("click", function(){
+      fetchWeatherData(citySearched)
+    });
+    historyList.appendChild (li)
+  })
+};
+
 //the function will only be called when the search form is submitted
+var searchForm = document.getElementById("search-form");
 searchForm.addEventListener('submit', function (event) {
   event.preventDefault(); //preventing default form behaviour on submission
   var cityName = document.getElementById("search-input").value;
-  fetchWeatherData(cityName)
+  if (cityName){
+    fetchWeatherData(cityName)
+  }
 })
-
 
 //   * When a user view future weather conditions for that city they are presented with a 5-day forecast that displays:
 //     * The date
